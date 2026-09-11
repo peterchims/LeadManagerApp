@@ -16,7 +16,16 @@ model Lead {
   email     String   @unique
   status    String   @default("New")
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  // Attribution only — leads are a shared workspace, not scoped per user.
+  // SetNull on delete: removing a user shouldn't cascade-delete the leads they created.
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([createdById])
   @@map("leads")
 }
 
@@ -26,6 +35,9 @@ model User {
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  leadsCreated Lead[]
 
   @@map("users")
 }
