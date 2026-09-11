@@ -27,7 +27,7 @@ export function StatsCards({ leads, isLoading }: { leads: Lead[]; isLoading: boo
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
       {cards.map((card) => {
         const Icon = card.icon;
         return (
