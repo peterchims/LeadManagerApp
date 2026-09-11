@@ -64,6 +64,7 @@ describe("GET /leads", () => {
     expect(findMany).toHaveBeenCalledWith({
       where: {},
       orderBy: { createdAt: "desc" },
+      include: { createdBy: { select: { id: true, name: true } } },
     });
   });
 
@@ -106,7 +107,8 @@ describe("POST /leads", () => {
     expect(res.status).toBe(201);
     expect(res.body).toEqual(sampleLead);
     expect(create).toHaveBeenCalledWith({
-      data: { name: "Jane Doe", email: "jane@example.com", status: "New" },
+      data: { name: "Jane Doe", email: "jane@example.com", status: "New", createdById: "user-1" },
+      include: { createdBy: { select: { id: true, name: true } } },
     });
   });
 
