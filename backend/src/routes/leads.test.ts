@@ -1,6 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import request from "supertest";
 import { Prisma } from "@prisma/client";
+import { createApp } from "../app";
+import { signToken } from "../lib/jwt";
 
 const { findMany, create } = vi.hoisted(() => ({
   findMany: vi.fn(),
@@ -15,9 +17,6 @@ vi.mock("../lib/prisma", () => ({
     $disconnect: vi.fn(),
   },
 }));
-
-const { createApp } = await import("../app");
-const { signToken } = await import("../lib/jwt");
 
 const authHeader = `Bearer ${signToken({ sub: "user-1", email: "owner@example.com", name: "Owner" })}`;
 

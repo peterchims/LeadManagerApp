@@ -1,6 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import request from "supertest";
 import { Prisma } from "@prisma/client";
+import { createApp } from "../app";
+import { hashPassword } from "../lib/password";
+import { signToken } from "../lib/jwt";
 
 const { findUnique, create } = vi.hoisted(() => ({
   findUnique: vi.fn(),
@@ -15,9 +18,6 @@ vi.mock("../lib/prisma", () => ({
     $disconnect: vi.fn(),
   },
 }));
-
-const { createApp } = await import("../app");
-const { hashPassword } = await import("../lib/password");
 
 const now = new Date().toISOString();
 
@@ -156,7 +156,6 @@ describe("GET /auth/me", () => {
   });
 
   it("returns the current user for a valid token", async () => {
-    const { signToken } = await import("../lib/jwt");
     findUnique.mockResolvedValue({
       id: "user-1",
       name: "Jane Doe",
