@@ -1,18 +1,18 @@
 import useSWR from "swr";
-import { leadsApi } from "@/lib/api";
+import { leadsApi, type ListLeadsFilters } from "@/lib/api";
 import type { CreateLeadInput } from "@/types/lead";
 
-const LEADS_KEY = "/leads";
+function keyFor(filters: ListLeadsFilters) {
+  return ["/leads", filters.status ?? "", filters.q ?? ""] as const;
+}
 
-export function useLeads() {
-  const { data, error, isLoading, mutate } = useSWR(LEADS_KEY, () => leadsApi.list());
+export function useLeads(filters: ListLeadsFilters = {}) {
+  const { data, error, isLoading, mutate } = useSWR(keyFor(filters), () => leadsApi.list(filters));
 
   async function addLead(input: CreateLeadInput) {
     const created = await leadsApi.create(input);
-    // Optimistically prepend the new lead without waiting for a refetch.
-    await mutate((current) => (current ? [created, ...current] : [created]), {
-      revalidate: false,
-    });
+    // Refresh from the server so filters/sorting stay authoritative.
+    await mutate();
     return created;
   }
 

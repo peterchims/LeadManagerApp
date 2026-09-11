@@ -1,27 +1,23 @@
-import "dotenv/config";
-import express, { type ErrorRequestHandler } from "express";
-import cors from "cors";
-import { leadsRouter } from "./routes/leads";
+import { createApp } from "./app";
+import { env } from "./config/env";
+import { logger } from "./lib/logger";
+import { prisma } from "./lib/prisma";
 
-const app = express();
-const PORT = process.env.PORT ?? 4000;
-const ORIGIN = process.env.CORS_ORIGIN ?? "http://localhost:3000";
+const app = createApp();
 
-app.use(cors({ origin: ORIGIN }));
-app.use(express.json());
-
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+const server = app.listen(env.PORT, () => {
+  logger.info(`Lead Manager API listening on http://localhost:${env.PORT} [${env.NODE_ENV}]`);
 });
 
-app.use("/leads", leadsRouter);
+function shutdown(signal: string) {
+  logger.info(`${signal} received, shutting down gracefully`);
+  server.close(async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+  // Force-exit if connections don't drain in time.
+  setTimeout(() => process.exit(1), 10_000).unref();
+}
 
-const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json({ error: "Internal server error" });
-};
-app.use(errorHandler);
-
-app.listen(PORT, () => {
-  console.log(`Lead Manager API listening on http://localhost:${PORT}`);
-});
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));

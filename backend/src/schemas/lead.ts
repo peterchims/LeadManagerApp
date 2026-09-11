@@ -17,3 +17,10 @@ export const createLeadSchema = z.object({
 });
 
 export type CreateLeadInput = z.infer<typeof createLeadSchema>;
+
+export const listLeadsQuerySchema = z.object({
+  status: z.enum(LEAD_STATUSES).optional(),
+  q: z.string().trim().min(1).max(200).optional(),
+});
+
+export type ListLeadsQuery = z.infer<typeof listLeadsQuerySchema>;

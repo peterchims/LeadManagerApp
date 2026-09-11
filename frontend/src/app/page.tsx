@@ -1,48 +1,56 @@
 "use client";
 
-import { LeadForm } from "@/components/LeadForm";
-import { LeadTable } from "@/components/LeadTable";
+import { useState } from "react";
+import { AlertCircle } from "lucide-react";
+import { AddLeadDialog } from "@/components/add-lead-dialog";
+import { Header } from "@/components/header";
+import { LeadTable } from "@/components/lead-table";
+import { StatsCards } from "@/components/stats-cards";
+import { Toolbar } from "@/components/toolbar";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useLeads } from "@/hooks/useLeads";
+import type { LeadStatus } from "@/types/lead";
 
 export default function Home() {
-  const { leads, isLoading, error, addLead } = useLeads();
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState<LeadStatus | "all">("all");
+  const debouncedSearch = useDebouncedValue(search, 300);
+
+  const { leads: allLeads, isLoading: statsLoading } = useLeads();
+  const {
+    leads: filteredLeads,
+    isLoading,
+    error,
+    addLead,
+  } = useLeads({
+    status: status === "all" ? undefined : status,
+    q: debouncedSearch || undefined,
+  });
+
+  const hasFilters = status !== "all" || debouncedSearch.length > 0;
 
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
-      <main className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-12">
-        <header>
-          <h1 className="text-2xl font-semibold tracking-tight text-black dark:text-zinc-50">
-            Lead Manager
-          </h1>
-          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-            Track and manage incoming leads.
-          </p>
-        </header>
+    <>
+      <Header>
+        <AddLeadDialog onCreate={addLead} />
+      </Header>
 
-        <LeadForm onSubmit={addLead} />
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-8">
+        <StatsCards leads={allLeads} isLoading={statsLoading} />
 
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-black/80 dark:text-white/80">
-              Leads {!isLoading && `(${leads.length})`}
-            </h2>
-          </div>
-
-          {isLoading && (
-            <div className="rounded-lg border border-black/10 p-8 text-center text-sm text-black/50 dark:border-white/10 dark:text-white/50">
-              Loading leads...
-            </div>
-          )}
+        <div className="flex flex-col gap-3">
+          <Toolbar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
 
           {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-400">
+            <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <AlertCircle className="h-4 w-4 shrink-0" />
               Couldn&apos;t load leads: {error.message}
             </div>
           )}
 
-          {!isLoading && !error && <LeadTable leads={leads} />}
-        </section>
+          {!error && <LeadTable leads={filteredLeads} isLoading={isLoading} hasFilters={hasFilters} />}
+        </div>
       </main>
-    </div>
+    </>
   );
 }
