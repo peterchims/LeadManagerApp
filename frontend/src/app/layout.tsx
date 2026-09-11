@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/components/auth-provider";
@@ -16,8 +16,21 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lead Manager",
-  description: "Track, filter, and add sales leads",
+  title: "Lead Manager — Track your sales pipeline",
+  description:
+    "A secure, fast lead management dashboard. Search, filter, and track leads from New to Closed-Won.",
+  openGraph: {
+    title: "Lead Manager",
+    description: "A secure, fast lead management dashboard for small sales teams.",
+    type: "website",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0f" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -240,6 +240,10 @@ body {
   }
 }
 
+.animate-fade-up {
+  animation: fade-up 700ms ease-out both;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(16px);
@@ -256,7 +260,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-float-slow,
   .animate-float-slower,
-  .animate-row-in {
+  .animate-row-in,
+  .animate-fade-up {
     animation: none;
   }
 
