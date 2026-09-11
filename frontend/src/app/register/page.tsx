@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/");
+    if (status === "authenticated") router.replace("/dashboard");
   }, [status, router]);
 
   async function handleSubmit(e: FormEvent) {
@@ -32,7 +32,7 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       await register({ name: name.trim(), email: email.trim(), password });
-      router.replace("/");
+      router.replace("/dashboard");
     } catch (err) {
       if (err instanceof ApiError) {
         setFormError(err.message);

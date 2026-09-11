@@ -19,7 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "authenticated") router.replace("/");
+    if (status === "authenticated") router.replace("/dashboard");
   }, [status, router]);
 
   async function handleSubmit(e: FormEvent) {
@@ -28,7 +28,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
     try {
       await login({ email: email.trim(), password });
-      router.replace("/");
+      router.replace("/dashboard");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {

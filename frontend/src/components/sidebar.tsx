@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { LogOut, Users } from "lucide-react";
 import { useAuth } from "./auth-provider";
 import { LeadAvatar } from "./lead-avatar";
@@ -11,7 +12,7 @@ export function Sidebar() {
   return (
     <aside className="hidden w-60 shrink-0 flex-col border-r border-border bg-sidebar lg:flex">
       <div className="flex items-center justify-between gap-2.5 px-5 py-5">
-        <div className="flex items-center gap-2.5">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
           <div className="brand-gradient flex h-8 w-8 items-center justify-center rounded-lg text-white shadow-sm">
             <Users className="h-4 w-4" />
           </div>
@@ -19,15 +20,18 @@ export function Sidebar() {
             <p className="text-sm font-semibold leading-none text-foreground">Lead Manager</p>
             <p className="mt-1 text-[11px] text-muted-foreground">Sales pipeline</p>
           </div>
-        </div>
+        </Link>
         <ThemeToggle />
       </div>
 
       <nav className="flex-1 px-3 py-2">
-        <div className="flex items-center gap-2.5 rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-foreground">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-2.5 rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
+        >
           <Users className="h-4 w-4" />
           Leads
-        </div>
+        </Link>
       </nav>
 
       {user && (
