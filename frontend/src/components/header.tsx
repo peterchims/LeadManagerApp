@@ -11,11 +11,11 @@ export function Header({ children }: { children?: ReactNode }) {
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-sm">
       <div className="flex items-center justify-between gap-4 px-5 py-4 lg:px-8">
-        <div className="flex items-center gap-2.5 lg:hidden">
-          <div className="brand-gradient flex h-7 w-7 items-center justify-center rounded-md text-white">
+        <div className="flex min-w-0 items-center gap-2.5 lg:hidden">
+          <div className="brand-gradient flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-white">
             <Users className="h-3.5 w-3.5" />
           </div>
-          <p className="text-sm font-semibold text-foreground">Lead Manager</p>
+          <p className="truncate whitespace-nowrap text-sm font-semibold text-foreground">Lead Manager</p>
         </div>
 
         <div className="hidden lg:block">
@@ -23,9 +23,9 @@ export function Header({ children }: { children?: ReactNode }) {
           <p className="text-sm text-muted-foreground">Track and manage your sales pipeline</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           {children}
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex shrink-0 items-center gap-2 lg:hidden">
             <ThemeToggle />
             <button
               type="button"

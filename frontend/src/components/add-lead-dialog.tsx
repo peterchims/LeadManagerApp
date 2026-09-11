@@ -19,10 +19,11 @@ export function AddLeadDialog({ onCreate }: AddLeadDialogProps) {
       <Dialog.Trigger asChild>
         <button
           type="button"
-          className="brand-gradient inline-flex h-9 items-center gap-1.5 rounded-lg px-3.5 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90"
+          aria-label="Add lead"
+          className="brand-gradient inline-flex h-9 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 sm:px-3.5"
         >
-          <Plus className="h-4 w-4" />
-          Add lead
+          <Plus className="h-4 w-4 shrink-0" />
+          <span className="hidden sm:inline">Add lead</span>
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
