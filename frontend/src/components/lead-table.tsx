@@ -1,19 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, Inbox } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, UserRoundSearch } from "lucide-react";
 import type { Lead } from "@/types/lead";
 import { StatusBadge } from "./status-badge";
-import { cn } from "@/lib/utils";
+import { LeadAvatar } from "./lead-avatar";
 
-type SortKey = "name" | "email" | "status" | "createdAt";
+type SortKey = "name" | "status" | "createdAt";
 type SortDirection = "asc" | "desc";
 
-const COLUMNS: { key: SortKey; label: string }[] = [
-  { key: "name", label: "Name" },
-  { key: "email", label: "Email" },
+const COLUMNS: { key: SortKey; label: string; className?: string }[] = [
+  { key: "name", label: "Lead" },
   { key: "status", label: "Status" },
-  { key: "createdAt", label: "Created" },
+  { key: "createdAt", label: "Created", className: "text-right" },
 ];
 
 function formatDate(iso: string) {
@@ -28,11 +27,21 @@ function SkeletonRows() {
     <>
       {Array.from({ length: 5 }).map((_, i) => (
         <tr key={i}>
-          {COLUMNS.map((col) => (
-            <td key={col.key} className="px-4 py-3.5">
-              <div className="h-4 w-full max-w-32 animate-pulse rounded bg-muted" />
-            </td>
-          ))}
+          <td className="px-5 py-3.5">
+            <div className="flex items-center gap-3">
+              <div className="skeleton h-9 w-9 shrink-0 rounded-full" />
+              <div className="flex flex-col gap-1.5">
+                <div className="skeleton h-3.5 w-28 rounded" />
+                <div className="skeleton h-3 w-36 rounded" />
+              </div>
+            </div>
+          </td>
+          <td className="px-5 py-3.5">
+            <div className="skeleton h-5 w-20 rounded-full" />
+          </td>
+          <td className="px-5 py-3.5 text-right">
+            <div className="skeleton ml-auto h-3.5 w-24 rounded" />
+          </td>
         </tr>
       ))}
     </>
@@ -70,66 +79,85 @@ export function LeadTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-border bg-card">
-      <table className="w-full min-w-[640px] text-left text-sm">
-        <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
-          <tr>
-            {COLUMNS.map((col) => (
-              <th key={col.key} className="px-4 py-3 font-medium">
-                <button
-                  type="button"
-                  onClick={() => toggleSort(col.key)}
-                  className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
-                >
-                  {col.label}
-                  {sortKey === col.key ? (
-                    sortDirection === "asc" ? (
-                      <ArrowUp className="h-3 w-3" />
-                    ) : (
-                      <ArrowDown className="h-3 w-3" />
-                    )
-                  ) : (
-                    <ArrowUpDown className="h-3 w-3 opacity-40" />
-                  )}
-                </button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {isLoading && <SkeletonRows />}
-
-          {!isLoading && sortedLeads.length === 0 && (
+    <div className="card-shadow min-w-0 overflow-hidden rounded-xl border border-border bg-card">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[560px] text-left text-sm">
+          <thead className="border-b border-border text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <td colSpan={COLUMNS.length} className="px-4 py-12">
-                <div className="flex flex-col items-center gap-2 text-center">
-                  <Inbox className="h-8 w-8 text-muted-foreground" />
-                  <p className="text-sm font-medium text-foreground">
-                    {hasFilters ? "No leads match your filters" : "No leads yet"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {hasFilters
-                      ? "Try adjusting your search or status filter."
-                      : "Add your first lead to get started."}
-                  </p>
-                </div>
-              </td>
+              {COLUMNS.map((col) => (
+                <th key={col.key} className={`px-5 py-3 font-medium ${col.className ?? ""}`}>
+                  <button
+                    type="button"
+                    onClick={() => toggleSort(col.key)}
+                    className={`inline-flex items-center gap-1 transition-colors hover:text-foreground ${col.className ? "flex-row-reverse" : ""}`}
+                  >
+                    {col.label}
+                    {sortKey === col.key ? (
+                      sortDirection === "asc" ? (
+                        <ArrowUp className="h-3 w-3" />
+                      ) : (
+                        <ArrowDown className="h-3 w-3" />
+                      )
+                    ) : (
+                      <ArrowUpDown className="h-3 w-3 opacity-40" />
+                    )}
+                  </button>
+                </th>
+              ))}
             </tr>
-          )}
+          </thead>
+          <tbody className="divide-y divide-border">
+            {isLoading && <SkeletonRows />}
 
-          {!isLoading &&
-            sortedLeads.map((lead) => (
-              <tr key={lead.id} className="transition-colors hover:bg-muted/50">
-                <td className={cn("px-4 py-3.5 font-medium text-foreground")}>{lead.name}</td>
-                <td className="px-4 py-3.5 text-muted-foreground">{lead.email}</td>
-                <td className="px-4 py-3.5">
-                  <StatusBadge status={lead.status} />
+            {!isLoading && sortedLeads.length === 0 && (
+              <tr>
+                <td colSpan={COLUMNS.length} className="px-5 py-16">
+                  <div className="flex flex-col items-center gap-3 text-center">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                      <UserRoundSearch className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {hasFilters ? "No leads match your filters" : "No leads yet"}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {hasFilters
+                          ? "Try adjusting your search or status filter."
+                          : "Add your first lead to get started."}
+                      </p>
+                    </div>
+                  </div>
                 </td>
-                <td className="px-4 py-3.5 text-muted-foreground">{formatDate(lead.createdAt)}</td>
               </tr>
-            ))}
-        </tbody>
-      </table>
+            )}
+
+            {!isLoading &&
+              sortedLeads.map((lead, i) => (
+                <tr
+                  key={lead.id}
+                  style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
+                  className="animate-row-in group transition-colors hover:bg-muted/40"
+                >
+                  <td className="px-5 py-3">
+                    <div className="flex items-center gap-3">
+                      <LeadAvatar name={lead.name} />
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-foreground">{lead.name}</p>
+                        <p className="truncate text-xs text-muted-foreground">{lead.email}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-3">
+                    <StatusBadge status={lead.status} />
+                  </td>
+                  <td className="px-5 py-3 text-right text-xs text-muted-foreground">
+                    {formatDate(lead.createdAt)}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

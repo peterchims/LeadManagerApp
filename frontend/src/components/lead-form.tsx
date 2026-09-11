@@ -11,7 +11,7 @@ interface LeadFormProps {
 }
 
 const inputClasses =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20";
+  "w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20";
 
 export function LeadForm({ onSubmit, onSuccess }: LeadFormProps) {
   const formId = useId();
@@ -101,7 +101,7 @@ export function LeadForm({ onSubmit, onSuccess }: LeadFormProps) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-1 inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+        className="brand-gradient mt-1 inline-flex h-10 items-center justify-center rounded-lg text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
       >
         {isSubmitting ? "Adding..." : "Add lead"}
       </button>

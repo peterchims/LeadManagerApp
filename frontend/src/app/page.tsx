@@ -5,6 +5,7 @@ import { AlertCircle } from "lucide-react";
 import { AddLeadDialog } from "@/components/add-lead-dialog";
 import { Header } from "@/components/header";
 import { LeadTable } from "@/components/lead-table";
+import { Sidebar } from "@/components/sidebar";
 import { StatsCards } from "@/components/stats-cards";
 import { Toolbar } from "@/components/toolbar";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
@@ -30,27 +31,31 @@ export default function Home() {
   const hasFilters = status !== "all" || debouncedSearch.length > 0;
 
   return (
-    <>
-      <Header>
-        <AddLeadDialog onCreate={addLead} />
-      </Header>
+    <div className="flex min-h-screen w-full">
+      <Sidebar />
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-6 py-8">
-        <StatsCards leads={allLeads} isLoading={statsLoading} />
+      <div className="bg-mesh flex min-w-0 flex-1 flex-col">
+        <Header>
+          <AddLeadDialog onCreate={addLead} />
+        </Header>
 
-        <div className="flex flex-col gap-3">
-          <Toolbar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
+        <main className="mx-auto flex w-full min-w-0 max-w-5xl flex-1 flex-col gap-6 px-5 py-6 lg:px-8 lg:py-8">
+          <StatsCards leads={allLeads} isLoading={statsLoading} />
 
-          {error && (
-            <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              Couldn&apos;t load leads: {error.message}
-            </div>
-          )}
+          <div className="flex min-w-0 flex-col gap-4">
+            <Toolbar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
 
-          {!error && <LeadTable leads={filteredLeads} isLoading={isLoading} hasFilters={hasFilters} />}
-        </div>
-      </main>
-    </>
+            {error && (
+              <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                Couldn&apos;t load leads: {error.message}
+              </div>
+            )}
+
+            {!error && <LeadTable leads={filteredLeads} isLoading={isLoading} hasFilters={hasFilters} />}
+          </div>
+        </main>
+      </div>
+    </div>
   );
 }
