@@ -14,6 +14,8 @@ export interface Lead {
   email: string;
   status: LeadStatus;
   createdAt: string;
+  updatedAt: string;
+  createdBy: { id: string; name: string } | null;
 }
 
 export interface CreateLeadInput {

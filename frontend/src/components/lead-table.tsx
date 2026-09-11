@@ -151,7 +151,12 @@ export function LeadTable({
                     <StatusBadge status={lead.status} />
                   </td>
                   <td className="px-5 py-3 text-right text-xs text-muted-foreground">
-                    {formatDate(lead.createdAt)}
+                    <p>{formatDate(lead.createdAt)}</p>
+                    {lead.createdBy && (
+                      <p className="mt-0.5 hidden text-[11px] text-muted-foreground/70 sm:block">
+                        by {lead.createdBy.name}
+                      </p>
+                    )}
                   </td>
                 </tr>
               ))}
