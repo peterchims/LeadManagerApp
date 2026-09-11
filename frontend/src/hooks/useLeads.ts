@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { leadsApi, type ListLeadsFilters } from "@/lib/api";
+import { leadsApi, type ApiError, type ListLeadsFilters } from "@/lib/api";
 import type { CreateLeadInput } from "@/types/lead";
 
 function keyFor(filters: ListLeadsFilters) {
@@ -19,7 +19,7 @@ export function useLeads(filters: ListLeadsFilters = {}) {
   return {
     leads: data ?? [],
     isLoading,
-    error: error as Error | undefined,
+    error: error as ApiError | undefined,
     addLead,
   };
 }

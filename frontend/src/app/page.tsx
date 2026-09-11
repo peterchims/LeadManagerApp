@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlertCircle } from "lucide-react";
 import { AddLeadDialog } from "@/components/add-lead-dialog";
+import { AuthGuard } from "@/components/auth-guard";
+import { useAuth } from "@/components/auth-provider";
 import { Header } from "@/components/header";
 import { LeadTable } from "@/components/lead-table";
 import { Sidebar } from "@/components/sidebar";
@@ -12,7 +14,8 @@ import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useLeads } from "@/hooks/useLeads";
 import type { LeadStatus } from "@/types/lead";
 
-export default function Home() {
+function Dashboard() {
+  const { logout } = useAuth();
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<LeadStatus | "all">("all");
   const debouncedSearch = useDebouncedValue(search, 300);
@@ -27,6 +30,11 @@ export default function Home() {
     status: status === "all" ? undefined : status,
     q: debouncedSearch || undefined,
   });
+
+  // A previously-valid token can expire mid-session; bounce back to login.
+  useEffect(() => {
+    if (error?.status === 401) logout();
+  }, [error, logout]);
 
   const hasFilters = status !== "all" || debouncedSearch.length > 0;
 
@@ -45,7 +53,7 @@ export default function Home() {
           <div className="flex min-w-0 flex-col gap-4">
             <Toolbar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
 
-            {error && (
+            {error && error.status !== 401 && (
               <div className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 Couldn&apos;t load leads: {error.message}
@@ -57,5 +65,13 @@ export default function Home() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <AuthGuard>
+      <Dashboard />
+    </AuthGuard>
   );
 }

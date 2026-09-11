@@ -10,12 +10,16 @@ const { findMany, create } = vi.hoisted(() => ({
 vi.mock("../lib/prisma", () => ({
   prisma: {
     lead: { findMany, create },
+    user: { findUnique: vi.fn() },
     $queryRaw: vi.fn(),
     $disconnect: vi.fn(),
   },
 }));
 
 const { createApp } = await import("../app");
+const { signToken } = await import("../lib/jwt");
+
+const authHeader = `Bearer ${signToken({ sub: "user-1", email: "owner@example.com", name: "Owner" })}`;
 
 const sampleLead = {
   id: "11111111-1111-1111-1111-111111111111",
@@ -24,6 +28,25 @@ const sampleLead = {
   status: "New",
   createdAt: new Date().toISOString(),
 };
+
+describe("auth gate on /leads", () => {
+  it("rejects requests with no token", async () => {
+    const app = createApp();
+
+    const res = await request(app).get("/leads");
+
+    expect(res.status).toBe(401);
+    expect(res.body.error.code).toBe("UNAUTHORIZED");
+  });
+
+  it("rejects requests with a malformed token", async () => {
+    const app = createApp();
+
+    const res = await request(app).get("/leads").set("Authorization", "Bearer not-a-real-token");
+
+    expect(res.status).toBe(401);
+  });
+});
 
 describe("GET /leads", () => {
   beforeEach(() => {
@@ -35,7 +58,7 @@ describe("GET /leads", () => {
     findMany.mockResolvedValue([sampleLead]);
     const app = createApp();
 
-    const res = await request(app).get("/leads");
+    const res = await request(app).get("/leads").set("Authorization", authHeader);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual([sampleLead]);
@@ -49,7 +72,7 @@ describe("GET /leads", () => {
     findMany.mockResolvedValue([]);
     const app = createApp();
 
-    await request(app).get("/leads").query({ status: "Engaged" });
+    await request(app).get("/leads").set("Authorization", authHeader).query({ status: "Engaged" });
 
     expect(findMany).toHaveBeenCalledWith(
       expect.objectContaining({ where: { status: "Engaged" } }),
@@ -59,7 +82,7 @@ describe("GET /leads", () => {
   it("rejects an invalid status filter", async () => {
     const app = createApp();
 
-    const res = await request(app).get("/leads").query({ status: "Bogus" });
+    const res = await request(app).get("/leads").set("Authorization", authHeader).query({ status: "Bogus" });
 
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
@@ -78,6 +101,7 @@ describe("POST /leads", () => {
 
     const res = await request(app)
       .post("/leads")
+      .set("Authorization", authHeader)
       .send({ name: "Jane Doe", email: "jane@example.com" });
 
     expect(res.status).toBe(201);
@@ -90,7 +114,7 @@ describe("POST /leads", () => {
   it("rejects a request missing required fields", async () => {
     const app = createApp();
 
-    const res = await request(app).post("/leads").send({ name: "" });
+    const res = await request(app).post("/leads").set("Authorization", authHeader).send({ name: "" });
 
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe("VALIDATION_ERROR");
@@ -102,6 +126,7 @@ describe("POST /leads", () => {
 
     const res = await request(app)
       .post("/leads")
+      .set("Authorization", authHeader)
       .send({ name: "Jane Doe", email: "not-an-email" });
 
     expect(res.status).toBe(400);
@@ -118,6 +143,7 @@ describe("POST /leads", () => {
 
     const res = await request(app)
       .post("/leads")
+      .set("Authorization", authHeader)
       .send({ name: "Jane Doe", email: "jane@example.com" });
 
     expect(res.status).toBe(409);

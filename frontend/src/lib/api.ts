@@ -1,4 +1,6 @@
 import type { CreateLeadInput, Lead, LeadStatus } from "@/types/lead";
+import type { AuthResponse, LoginInput, RegisterInput, User } from "@/types/auth";
+import { getToken } from "./token";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
@@ -23,11 +25,17 @@ interface ErrorBody {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const token = getToken();
+
   let res: Response;
   try {
     res = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
-      headers: { "Content-Type": "application/json", ...init?.headers },
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...init?.headers,
+      },
     });
   } catch {
     throw new ApiError("Could not reach the server. Is the API running?", 0, "NETWORK_ERROR");
@@ -64,4 +72,12 @@ export const leadsApi = {
       method: "POST",
       body: JSON.stringify(input),
     }),
+};
+
+export const authApi = {
+  register: (input: RegisterInput) =>
+    request<AuthResponse>("/auth/register", { method: "POST", body: JSON.stringify(input) }),
+  login: (input: LoginInput) =>
+    request<AuthResponse>("/auth/login", { method: "POST", body: JSON.stringify(input) }),
+  me: () => request<{ user: User }>("/auth/me"),
 };
