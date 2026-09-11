@@ -20,6 +20,10 @@ services:
         sync: false # set to your Netlify site URL(s), comma-separated
       - key: LOG_LEVEL
         value: info
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
 
 databases:
   - name: lead-manager-db
