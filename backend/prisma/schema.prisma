@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Stored as a plain string (validated at the API layer via Zod, see src/schemas/lead.ts)
+// rather than a native Postgres enum, since the required values ("Proposal Sent",
+// "Closed-Won") contain spaces/hyphens that aren't valid Postgres enum identifiers.
+model Lead {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  status    String   @default("New")
+  createdAt DateTime @default(now())
+
+  @@map("leads")
+}
