@@ -7,8 +7,10 @@ import pinoHttp from "pino-http";
 import { env } from "./config/env";
 import { logger } from "./lib/logger";
 import { prisma } from "./lib/prisma";
+import { authRouter } from "./routes/auth";
 import { leadsRouter } from "./routes/leads";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import { requireAuth } from "./middleware/requireAuth";
 
 export function createApp() {
   const app = express();
@@ -36,8 +38,16 @@ export function createApp() {
   });
   app.use(apiLimiter);
 
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: { message: "Too many attempts, please try again later", code: "RATE_LIMITED" } },
+  });
+
   app.get("/", (_req, res) => {
-    res.json({ name: "Lead Manager API", status: "ok", docs: "/health, /leads" });
+    res.json({ name: "Lead Manager API", status: "ok", docs: "/health, /auth, /leads" });
   });
 
   app.get("/health", async (_req, res) => {
@@ -49,7 +59,8 @@ export function createApp() {
     }
   });
 
-  app.use("/leads", leadsRouter);
+  app.use("/auth", authLimiter, authRouter);
+  app.use("/leads", requireAuth, leadsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
