@@ -43,7 +43,7 @@ export function StatsCards({ leads, isLoading }: { leads: Lead[]; isLoading: boo
             {isLoading ? (
               <div className="skeleton mt-2 h-7 w-12 rounded-md" />
             ) : (
-              <p className="mt-1 text-2xl font-semibold tabular-nums text-card-foreground">{card.value}</p>
+              <p className="mt-1 text-xl font-semibold tabular-nums text-card-foreground">{card.value}</p>
             )}
           </div>
         );

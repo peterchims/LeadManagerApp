@@ -2,6 +2,24 @@
 
 A lead management app with authenticated, multi-user access: a hardened Express + Prisma REST API on PostgreSQL, and a Next.js dashboard to search, filter, and create leads behind a login. Backend and frontend are independently deployable — backend on Render, frontend on Netlify.
 
+## Demo account
+
+The dashboard sits behind a login by design (see [Why authentication](#why-authentication) below). Rather than remove that for review, a seed script provisions a ready-to-use account with realistic sample data:
+
+| | |
+|---|---|
+| **URL** | _fill in your deployed frontend URL here before sharing_ |
+| **Email** | `demo@example.com` |
+| **Password** | `Demo1234!` |
+
+This account comes pre-loaded with 8 sample leads spanning every status, so the dashboard, filters, and stats aren't empty on first look. It's created by `backend/prisma/seed.ts` — see [Seeding the demo account](#seeding-the-demo-account).
+
+You're also welcome to register your own account instead; `/auth/register` is open to anyone.
+
+## Why authentication
+
+The original brief for this project asked for two unauthenticated endpoints (`POST /leads`, `GET /leads`) and a basic UI. Both exist exactly as specified. On top of that baseline, this build adds a full register/login system gating the dashboard, because a lead list with no access control isn't something you'd actually ship — anyone with the URL could read or write every lead. The auth layer (JWT bearer tokens, bcrypt-hashed passwords, protected routes) is there to demonstrate that judgment, not to obscure the core requirement.
+
 ## Architecture
 
 ```
@@ -73,7 +91,24 @@ npm install
 npm run dev                # http://localhost:3000
 ```
 
-Open http://localhost:3000 — the landing page. Register an account to reach the dashboard at `/dashboard`.
+Open http://localhost:3000 — the landing page. Register an account to reach the dashboard at `/dashboard`, or use the demo account below.
+
+## Seeding the demo account
+
+```bash
+cd backend
+npm run prisma:seed
+```
+
+This upserts the demo user (`demo@example.com` / `Demo1234!`) and 8 sample leads by email, so it's safe to run repeatedly — it updates in place rather than erroring on duplicates or piling up copies. Run it once against whichever database `DATABASE_URL` in `backend/.env` currently points to.
+
+To seed a deployed database instead of your local one, point `DATABASE_URL` at it for that one command:
+
+```bash
+DATABASE_URL="<your production connection string>" npm run prisma:seed
+```
+
+Treat the demo password like any other credential you're handing to a third party — it's fine for a time-boxed review, but rotate it (or delete the account) afterwards if the deployment stays up.
 
 ## API
 
@@ -125,6 +160,8 @@ The apps are split intentionally: the backend is a stateful API talking to Postg
 6. Set `JWT_SECRET` to a long random value (`openssl rand -base64 48`) — never reuse the local dev value.
 
 Either way, after the Netlify site exists, set `CORS_ORIGIN` on the Render service to your Netlify URL (e.g. `https://your-app.netlify.app`) — comma-separate multiple origins if needed.
+
+Once the backend is live, run `DATABASE_URL="<render db url>" npm run prisma:seed` locally (see [Seeding the demo account](#seeding-the-demo-account)) so the demo login works on the deployed site too.
 
 ### Frontend → Netlify
 

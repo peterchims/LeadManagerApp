@@ -19,7 +19,7 @@ export function Header({ children }: { children?: ReactNode }) {
         </div>
 
         <div className="hidden lg:block">
-          <h1 className="text-lg font-semibold tracking-tight text-foreground">Leads</h1>
+          <h1 className="text-base font-semibold tracking-tight text-foreground">Leads</h1>
           <p className="text-sm text-muted-foreground">Track and manage your sales pipeline</p>
         </div>
 
