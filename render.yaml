@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: lead-manager-api
+    runtime: node
+    rootDir: backend
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    preDeployCommand: npm run prisma:deploy
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lead-manager-db
+          property: connectionString
+      - key: CORS_ORIGIN
+        sync: false # set to your Netlify site URL(s), comma-separated
+      - key: LOG_LEVEL
+        value: info
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+
+databases:
+  - name: lead-manager-db
+    plan: free
+    databaseName: lead_manager
+    user: lead_manager
