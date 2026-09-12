@@ -3,5 +3,11 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  # Committed here (rather than relying solely on the Netlify UI) so the build
+  # always has it, regardless of dashboard env var state or caching quirks.
+  # Update this if the backend ever moves to a different Render URL.
+  NEXT_PUBLIC_API_URL = "https://lead-manager-api-v22s.onrender.com"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
