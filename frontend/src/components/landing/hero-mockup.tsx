@@ -10,9 +10,9 @@ const PREVIEW_ROWS: { name: string; email: string; status: LeadStatus }[] = [
 ];
 
 const STAT_CARDS = [
-  { label: "Total leads", value: "128", icon: Sparkles },
+  { label: "Leads", value: "128", icon: Sparkles },
   { label: "Engaged", value: "34", icon: Flame },
-  { label: "Closed-Won", value: "19", icon: CheckCircle2 },
+  { label: "Won", value: "19", icon: CheckCircle2 },
 ];
 
 export function HeroMockup() {
