@@ -38,7 +38,10 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       },
     });
   } catch {
-    throw new ApiError("Could not reach the server. Is the API running?", 0, "NETWORK_ERROR");
+    // Surfacing the actual URL here (instead of a generic message) means a
+    // misconfigured NEXT_PUBLIC_API_URL shows up immediately in the error
+    // itself, rather than needing to inspect the deployed JS bundle to find it.
+    throw new ApiError(`Could not reach the API at ${API_BASE_URL}. Is it running?`, 0, "NETWORK_ERROR");
   }
 
   if (!res.ok) {
