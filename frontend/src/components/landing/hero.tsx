@@ -23,11 +23,11 @@ export function Hero() {
             Secure, multi-user lead tracking
           </span>
 
-          <h1 className="max-w-lg text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          <h1 className="max-w-lg text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
             Manage your sales pipeline with <span className="text-gradient">absolute clarity</span>
           </h1>
 
-          <p className="mt-5 max-w-md text-base text-muted-foreground sm:text-lg">
+          <p className="mt-5 max-w-md text-sm text-muted-foreground sm:text-base">
             Track every lead from first contact to closed deal. Search, filter, and monitor your pipeline in a
             fast, secure dashboard built for small sales teams.
           </p>

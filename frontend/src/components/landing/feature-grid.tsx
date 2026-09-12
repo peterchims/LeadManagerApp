@@ -39,10 +39,10 @@ export function FeatureGrid() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
       <Reveal className="mx-auto max-w-xl text-center">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           Everything you need to run your pipeline
         </h2>
-        <p className="mt-3 text-muted-foreground">
+        <p className="mt-3 text-sm text-muted-foreground">
           No clutter, no busywork — just the tools that keep your leads moving forward.
         </p>
       </Reveal>

@@ -11,10 +11,10 @@ export function CtaSection() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 lg:px-8">
       <Reveal className="bg-mesh card-shadow-lg relative overflow-hidden rounded-2xl border border-border bg-card px-6 py-14 text-center sm:px-12">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
           Ready to get your pipeline organized?
         </h2>
-        <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+        <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
           Create a free account and start tracking leads in under a minute.
         </p>
         <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
